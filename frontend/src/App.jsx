@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Pages
+import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -57,10 +58,11 @@ const AppRoutes = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {isAuthenticated && <Navbar />}
-      <main className={isAuthenticated ? 'pt-16' : ''}>
+      <Navbar />
+      <main>
         <Routes>
           {/* Public Routes */}
+          <Route path="/" element={<Home />} />
           <Route
             path="/login"
             element={

@@ -67,7 +67,7 @@ const storeIdValidation = [
 ];
 
 // Routes
-router.get('/', authenticateToken, getAllStores);
+router.get('/', getAllStores); // Public route for home page
 
 // Store owner routes (must come before /:id routes to avoid conflicts)
 router.get('/my/stores', authenticateToken, isStoreOwner, getMyStores);

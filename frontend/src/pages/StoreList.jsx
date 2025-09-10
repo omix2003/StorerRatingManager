@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { storesAPI, ratingsAPI } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import RatingModal from '../components/RatingModal';
 
 const StoreList = () => {
+  const [searchParams] = useSearchParams();
   const [stores, setStores] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [sortBy, setSortBy] = useState('name');
