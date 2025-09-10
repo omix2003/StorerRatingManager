@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import StoreOwnerRegister from './pages/StoreOwnerRegister';
 import Dashboard from './pages/Dashboard';
 import UserManagement from './pages/UserManagement';
 import StoreManagement from './pages/StoreManagement';
@@ -59,7 +60,7 @@ const AppRoutes = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <main>
+      <main className="pt-16">
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Home />} />
@@ -76,6 +77,14 @@ const AppRoutes = () => {
             element={
               <PublicRoute>
                 <Register />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/register/store-owner"
+            element={
+              <PublicRoute>
+                <StoreOwnerRegister />
               </PublicRoute>
             }
           />

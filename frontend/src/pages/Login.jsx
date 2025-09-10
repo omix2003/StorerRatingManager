@@ -167,6 +167,19 @@ const Login = () => {
               </Link>
             </p>
           </div>
+
+          {/* Store Owner Registration Link */}
+          <div className="mt-4 text-center">
+            <p className="text-gray-600">
+              Own a store?{' '}
+              <Link
+                to="/register/store-owner"
+                className="font-semibold text-purple-600 hover:text-purple-500 transition-colors"
+              >
+                Register as Store Owner
+              </Link>
+            </p>
+          </div>
         </div>
 
         {/* Features */}

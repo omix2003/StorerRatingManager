@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Store } = require('../models');
 const { generateToken } = require('../utils/jwt');
 const { validationResult } = require('express-validator');
 
@@ -14,7 +14,7 @@ const register = async (req, res) => {
       });
     }
 
-    const { name, email, password, address, role = 'user' } = req.body;
+    const { name, email, password, address, role = 'user', storeData } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ where: { email } });
@@ -34,6 +34,19 @@ const register = async (req, res) => {
       role
     });
 
+    let store = null;
+
+    // If user is a store owner, create their store
+    if (role === 'store_owner' && storeData) {
+      store = await Store.create({
+        name: storeData.name,
+        description: storeData.description,
+        address: storeData.address,
+        category: storeData.category || 'other',
+        ownerId: user.id
+      });
+    }
+
     // Generate token
     const token = generateToken(user.id, user.role);
 
@@ -42,6 +55,7 @@ const register = async (req, res) => {
       message: 'User registered successfully',
       data: {
         user: user.toJSON(),
+        store: store ? store.toJSON() : null,
         token
       }
     });
