@@ -8,8 +8,8 @@ const router = express.Router();
 // Validation rules
 const registerValidation = [
   body('name')
-    .isLength({ min: 20, max: 60 })
-    .withMessage('Name must be between 20 and 60 characters'),
+    .isLength({ min: 2, max: 60 })
+    .withMessage('Name must be between 2 and 60 characters'),
   body('email')
     .isEmail()
     .normalizeEmail()

@@ -19,8 +19,20 @@ const getAllStores = async (req, res) => {
     // Calculate offset for pagination
     const offset = (page - 1) * limit;
 
+    // Handle sorting - some fields need special handling
+    let orderClause;
+    let needsPostProcessing = false;
+    
+    if (sortBy === 'totalRatings' || sortBy === 'averageRating') {
+      // For calculated fields, we'll sort after processing
+      orderClause = [['created_at', 'DESC']]; // Default sort
+      needsPostProcessing = true;
+    } else {
+      orderClause = [[sortBy, sortOrder.toUpperCase()]];
+    }
+
     // Get stores with pagination, filtering, and average rating
-    const { count, rows: stores } = await Store.findAndCountAll({
+    let queryOptions = {
       where: whereClause,
       include: [
         {
@@ -35,13 +47,19 @@ const getAllStores = async (req, res) => {
           required: false
         }
       ],
-      order: [[sortBy, sortOrder.toUpperCase()]],
-      limit: parseInt(limit),
-      offset: parseInt(offset)
-    });
+      order: orderClause
+    };
+
+    // Only apply pagination if we don't need post-processing
+    if (!needsPostProcessing) {
+      queryOptions.limit = parseInt(limit);
+      queryOptions.offset = parseInt(offset);
+    }
+
+    const { count, rows: stores } = await Store.findAndCountAll(queryOptions);
 
     // Calculate average rating for each store
-    const storesWithRating = stores.map(store => {
+    let storesWithRating = stores.map(store => {
       const storeData = store.toJSON();
       const ratings = storeData.ratings || [];
       const averageRating = ratings.length > 0 
@@ -55,6 +73,25 @@ const getAllStores = async (req, res) => {
         ratings: undefined // Remove detailed ratings from response
       };
     });
+
+    // Sort by calculated fields if needed
+    if (needsPostProcessing) {
+      storesWithRating.sort((a, b) => {
+        const aValue = a[sortBy];
+        const bValue = b[sortBy];
+        
+        if (sortOrder.toUpperCase() === 'ASC') {
+          return aValue - bValue;
+        } else {
+          return bValue - aValue;
+        }
+      });
+
+      // Apply pagination after sorting
+      const startIndex = parseInt(offset);
+      const endIndex = startIndex + parseInt(limit);
+      storesWithRating = storesWithRating.slice(startIndex, endIndex);
+    }
 
     res.json({
       success: true,
