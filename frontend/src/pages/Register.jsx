@@ -37,11 +37,11 @@ const Register = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Name validation (20-60 characters)
+    // Name validation (2-60 characters)
     if (!formData.name) {
       newErrors.name = 'Name is required';
-    } else if (formData.name.length < 20 || formData.name.length > 60) {
-      newErrors.name = 'Name must be between 20 and 60 characters';
+    } else if (formData.name.length < 2 || formData.name.length > 60) {
+      newErrors.name = 'Name must be between 2 and 60 characters';
     }
 
     // Email validation
@@ -127,7 +127,7 @@ const Register = () => {
                 className={`mt-1 appearance-none relative block w-full px-3 py-2 border ${
                   errors.name ? 'border-red-300' : 'border-gray-300'
                 } placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm`}
-                placeholder="Enter your full name (20-60 characters)"
+                placeholder="Enter your full name (2-60 characters)"
                 value={formData.name}
                 onChange={handleChange}
               />

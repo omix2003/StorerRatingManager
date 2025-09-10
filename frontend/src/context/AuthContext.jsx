@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
 import { authAPI } from '../services/api';
 
 const AuthContext = createContext();
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login function
-  const login = async (credentials) => {
+  const login = useCallback(async (credentials) => {
     dispatch({ type: 'LOGIN_START' });
     try {
       const response = await authAPI.login(credentials);
@@ -101,10 +101,10 @@ export const AuthProvider = ({ children }) => {
       });
       return { success: false, error: errorMessage };
     }
-  };
+  }, []);
 
   // Register function
-  const register = async (userData) => {
+  const register = useCallback(async (userData) => {
     dispatch({ type: 'LOGIN_START' });
     try {
       const response = await authAPI.register(userData);
@@ -127,10 +127,10 @@ export const AuthProvider = ({ children }) => {
       });
       return { success: false, error: errorMessage };
     }
-  };
+  }, []);
 
   // Logout function
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await authAPI.logout();
     } catch (error) {
@@ -140,10 +140,10 @@ export const AuthProvider = ({ children }) => {
       localStorage.removeItem('user');
       dispatch({ type: 'LOGOUT' });
     }
-  };
+  }, []);
 
   // Change password function
-  const changePassword = async (passwordData) => {
+  const changePassword = useCallback(async (passwordData) => {
     try {
       await authAPI.changePassword(passwordData);
       return { success: true };
@@ -151,33 +151,33 @@ export const AuthProvider = ({ children }) => {
       const errorMessage = error.response?.data?.message || 'Password change failed';
       return { success: false, error: errorMessage };
     }
-  };
+  }, []);
 
   // Update user function
-  const updateUser = (userData) => {
+  const updateUser = useCallback((userData) => {
     dispatch({ type: 'UPDATE_USER', payload: userData });
     localStorage.setItem('user', JSON.stringify({ ...state.user, ...userData }));
-  };
+  }, [state.user]);
 
   // Clear error function
-  const clearError = () => {
+  const clearError = useCallback(() => {
     dispatch({ type: 'CLEAR_ERROR' });
-  };
+  }, []);
 
   // Check if user has specific role
-  const hasRole = (role) => {
+  const hasRole = useCallback((role) => {
     return state.user?.role === role;
-  };
+  }, [state.user?.role]);
 
   // Check if user is admin
-  const isAdmin = () => {
+  const isAdmin = useCallback(() => {
     return state.user?.role === 'admin';
-  };
+  }, [state.user?.role]);
 
   // Check if user is store owner
-  const isStoreOwner = () => {
+  const isStoreOwner = useCallback(() => {
     return state.user?.role === 'store_owner';
-  };
+  }, [state.user?.role]);
 
   const value = {
     ...state,

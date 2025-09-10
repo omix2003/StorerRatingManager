@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { storesAPI, ratingsAPI } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
+import RatingModal from '../components/RatingModal';
 
 const StoreList = () => {
   const [stores, setStores] = useState([]);
@@ -8,10 +9,14 @@ const StoreList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [sortBy, setSortBy] = useState('name');
+  const [sortOrder, setSortOrder] = useState('ASC');
+  const [selectedStore, setSelectedStore] = useState(null);
+  const [isRatingModalOpen, setIsRatingModalOpen] = useState(false);
 
   useEffect(() => {
     fetchStores();
-  }, [currentPage, searchTerm]);
+  }, [currentPage, searchTerm, sortBy, sortOrder]);
 
   const fetchStores = async () => {
     try {
@@ -20,6 +25,8 @@ const StoreList = () => {
         page: currentPage,
         limit: 10,
         search: searchTerm || undefined,
+        sortBy: sortBy,
+        sortOrder: sortOrder,
       });
       setStores(response.data.data.stores);
       setTotalPages(response.data.data.pagination.totalPages);
@@ -33,6 +40,25 @@ const StoreList = () => {
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
     setCurrentPage(1);
+  };
+
+  const handleSort = (field) => {
+    if (sortBy === field) {
+      setSortOrder(sortOrder === 'ASC' ? 'DESC' : 'ASC');
+    } else {
+      setSortBy(field);
+      setSortOrder('ASC');
+    }
+    setCurrentPage(1);
+  };
+
+  const handleRateStore = (store) => {
+    setSelectedStore(store);
+    setIsRatingModalOpen(true);
+  };
+
+  const handleRatingSubmitted = () => {
+    fetchStores(); // Refresh the store list to show updated ratings
   };
 
   const renderStars = (rating) => {
@@ -65,8 +91,8 @@ const StoreList = () => {
         </p>
       </div>
 
-      {/* Search Bar */}
-      <div className="mb-6">
+      {/* Search and Sort Controls */}
+      <div className="mb-6 space-y-4">
         <input
           type="text"
           placeholder="Search stores by name or address..."
@@ -74,6 +100,50 @@ const StoreList = () => {
           onChange={handleSearch}
           className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
+        
+        <div className="flex flex-wrap gap-2">
+          <span className="text-sm font-medium text-gray-700 self-center">Sort by:</span>
+          <button
+            onClick={() => handleSort('name')}
+            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+              sortBy === 'name'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Name {sortBy === 'name' && (sortOrder === 'ASC' ? '↑' : '↓')}
+          </button>
+          <button
+            onClick={() => handleSort('averageRating')}
+            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+              sortBy === 'averageRating'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Rating {sortBy === 'averageRating' && (sortOrder === 'ASC' ? '↑' : '↓')}
+          </button>
+          <button
+            onClick={() => handleSort('totalRatings')}
+            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+              sortBy === 'totalRatings'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Reviews {sortBy === 'totalRatings' && (sortOrder === 'ASC' ? '↑' : '↓')}
+          </button>
+          <button
+            onClick={() => handleSort('created_at')}
+            className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+              sortBy === 'created_at'
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+            }`}
+          >
+            Date Added {sortBy === 'created_at' && (sortOrder === 'ASC' ? '↑' : '↓')}
+          </button>
+        </div>
       </div>
 
       {/* Stores Grid */}
@@ -98,7 +168,10 @@ const StoreList = () => {
                 </span>
               </div>
 
-              <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors">
+              <button 
+                onClick={() => handleRateStore(store)}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors"
+              >
                 Rate This Store
               </button>
             </div>
@@ -142,6 +215,14 @@ const StoreList = () => {
           </nav>
         </div>
       )}
+
+      {/* Rating Modal */}
+      <RatingModal
+        isOpen={isRatingModalOpen}
+        onClose={() => setIsRatingModalOpen(false)}
+        store={selectedStore}
+        onRatingSubmitted={handleRatingSubmitted}
+      />
     </div>
   );
 };
