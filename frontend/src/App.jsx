@@ -10,6 +10,7 @@ import UserManagement from './pages/UserManagement';
 import StoreManagement from './pages/StoreManagement';
 import StoreList from './pages/StoreList';
 import Profile from './pages/Profile';
+import UserRatings from './components/UserRatings';
 import NotFound from './pages/NotFound';
 
 // Components
@@ -99,6 +100,14 @@ const AppRoutes = () => {
             element={
               <ProtectedRoute>
                 <StoreList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/my-ratings"
+            element={
+              <ProtectedRoute>
+                <UserRatings />
               </ProtectedRoute>
             }
           />

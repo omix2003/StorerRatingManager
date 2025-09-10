@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ratingsAPI } from '../services/api';
 import LoadingSpinner from './LoadingSpinner';
 
-const RatingModal = ({ isOpen, onClose, store, onRatingSubmitted }) => {
-  const [rating, setRating] = useState(0);
-  const [reviewText, setReviewText] = useState('');
+const RatingModal = ({ isOpen, onClose, store, onRatingSubmitted, existingRating = null }) => {
+  const [rating, setRating] = useState(existingRating?.rating || 0);
+  const [reviewText, setReviewText] = useState(existingRating?.reviewText || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Update state when existingRating changes
+  useEffect(() => {
+    if (existingRating) {
+      setRating(existingRating.rating || 0);
+      setReviewText(existingRating.reviewText || '');
+    } else {
+      setRating(0);
+      setReviewText('');
+    }
+  }, [existingRating]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,11 +29,22 @@ const RatingModal = ({ isOpen, onClose, store, onRatingSubmitted }) => {
     try {
       setLoading(true);
       setError('');
-      await ratingsAPI.create({
-        storeId: store.id,
-        rating: rating,
-        reviewText: reviewText.trim() || null,
-      });
+      
+      if (existingRating) {
+        // Update existing rating
+        await ratingsAPI.update(existingRating.id, {
+          rating: rating,
+          reviewText: reviewText.trim() || null,
+        });
+      } else {
+        // Create new rating
+        await ratingsAPI.create({
+          storeId: store.id,
+          rating: rating,
+          reviewText: reviewText.trim() || null,
+        });
+      }
+      
       onRatingSubmitted();
       onClose();
       setRating(0);
@@ -36,8 +58,8 @@ const RatingModal = ({ isOpen, onClose, store, onRatingSubmitted }) => {
   };
 
   const handleClose = () => {
-    setRating(0);
-    setReviewText('');
+    setRating(existingRating?.rating || 0);
+    setReviewText(existingRating?.reviewText || '');
     setError('');
     onClose();
   };
@@ -48,7 +70,7 @@ const RatingModal = ({ isOpen, onClose, store, onRatingSubmitted }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">
-          Rate {store?.name}
+          {existingRating ? 'Edit Your Rating' : 'Rate'} {store?.name}
         </h3>
         
         <form onSubmit={handleSubmit}>
@@ -115,7 +137,7 @@ const RatingModal = ({ isOpen, onClose, store, onRatingSubmitted }) => {
               disabled={loading || rating === 0}
               className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {loading ? <LoadingSpinner size="small" /> : 'Submit Rating'}
+              {loading ? <LoadingSpinner size="small" /> : (existingRating ? 'Update Rating' : 'Submit Rating')}
             </button>
           </div>
         </form>

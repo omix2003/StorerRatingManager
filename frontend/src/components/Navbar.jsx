@@ -46,6 +46,12 @@ const Navbar = () => {
             >
               Stores
             </Link>
+            <Link
+              to="/my-ratings"
+              className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
+            >
+              My Ratings
+            </Link>
             {isAdmin() && (
               <>
                 <Link
@@ -162,6 +168,13 @@ const Navbar = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Stores
+            </Link>
+            <Link
+              to="/my-ratings"
+              className="text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              My Ratings
             </Link>
             {isAdmin() && (
               <>
