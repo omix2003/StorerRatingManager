@@ -1,0 +1,35 @@
+services:
+  # Frontend Service
+  - type: web
+    name: store-rate-frontend
+    env: static
+    buildCommand: cd frontend && npm install && npm run build
+    staticPublishPath: ./frontend/dist
+    envVars:
+      - key: VITE_API_BASE_URL
+        value: https://your-backend-app.onrender.com/api
+        # Replace 'your-backend-app' with your actual backend service name
+
+  # Backend Service (if you want to deploy backend too)
+  - type: web
+    name: store-rate-backend
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DB_HOST
+        value: your-db-host
+      - key: DB_PORT
+        value: 5432
+      - key: DB_NAME
+        value: your-db-name
+      - key: DB_USER
+        value: your-db-user
+      - key: DB_PASSWORD
+        value: your-db-password
+      - key: JWT_SECRET
+        value: your-jwt-secret
