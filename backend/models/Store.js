@@ -36,6 +36,17 @@ const Store = sequelize.define('Store', {
       }
     }
   },
+  category: {
+    type: DataTypes.ENUM('food', 'electronics', 'groceries', 'clothing', 'health', 'beauty', 'sports', 'books', 'home', 'automotive', 'other'),
+    allowNull: false,
+    defaultValue: 'other',
+    validate: {
+      isIn: {
+        args: [['food', 'electronics', 'groceries', 'clothing', 'health', 'beauty', 'sports', 'books', 'home', 'automotive', 'other']],
+        msg: 'Please select a valid category'
+      }
+    }
+  },
   ownerId: {
     type: DataTypes.INTEGER,
     allowNull: true,

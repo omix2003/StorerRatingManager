@@ -290,11 +290,69 @@ const getDashboardStats = async (req, res) => {
   }
 };
 
+const updateMyProfile = async (req, res) => {
+  try {
+    // Check for validation errors
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Validation failed',
+        errors: errors.array()
+      });
+    }
+
+    const userId = req.user.id;
+    const { name, email, address } = req.body;
+
+    // Find user
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
+
+    // Check if email is being changed and if it already exists
+    if (email && email !== user.email) {
+      const existingUser = await User.findOne({ where: { email } });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'User with this email already exists'
+        });
+      }
+    }
+
+    // Update user (excluding role and password)
+    await user.update({
+      name: name || user.name,
+      email: email || user.email,
+      address: address || user.address
+    });
+
+    res.json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: { user: user.toJSON() }
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to update profile',
+      error: error.message
+    });
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
   createUser,
   updateUser,
+  updateMyProfile,
   deleteUser,
   getDashboardStats
 };

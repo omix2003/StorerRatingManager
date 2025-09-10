@@ -110,7 +110,7 @@ const createRating = async (req, res) => {
       });
     }
 
-    const { storeId, rating } = req.body;
+    const { storeId, rating, reviewText } = req.body;
     const userId = req.user.id;
 
     // Verify store exists
@@ -138,7 +138,8 @@ const createRating = async (req, res) => {
     const newRating = await Rating.create({
       userId,
       storeId,
-      rating
+      rating,
+      reviewText
     });
 
     // Fetch the created rating with associations
@@ -185,7 +186,7 @@ const updateRating = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { rating } = req.body;
+    const { rating, reviewText } = req.body;
     const userId = req.user.id;
 
     // Find rating
@@ -206,7 +207,7 @@ const updateRating = async (req, res) => {
     }
 
     // Update rating
-    await existingRating.update({ rating });
+    await existingRating.update({ rating, reviewText });
 
     // Fetch the updated rating with associations
     const updatedRating = await Rating.findByPk(id, {

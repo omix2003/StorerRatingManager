@@ -40,6 +40,17 @@ const Rating = sequelize.define('Rating', {
         msg: 'Rating must be at most 5'
       }
     }
+  },
+  reviewText: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+    field: 'review_text',
+    validate: {
+      len: {
+        args: [0, 1000],
+        msg: 'Review text must not exceed 1000 characters'
+      }
+    }
   }
 }, {
   tableName: 'ratings',

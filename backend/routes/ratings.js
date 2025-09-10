@@ -19,14 +19,22 @@ const createRatingValidation = [
     .withMessage('Store ID must be a valid integer'),
   body('rating')
     .isInt({ min: 1, max: 5 })
-    .withMessage('Rating must be between 1 and 5')
+    .withMessage('Rating must be between 1 and 5'),
+  body('reviewText')
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage('Review text must not exceed 1000 characters')
 ];
 
 const updateRatingValidation = [
   param('id').isInt().withMessage('Rating ID must be a valid integer'),
   body('rating')
     .isInt({ min: 1, max: 5 })
-    .withMessage('Rating must be between 1 and 5')
+    .withMessage('Rating must be between 1 and 5'),
+  body('reviewText')
+    .optional()
+    .isLength({ max: 1000 })
+    .withMessage('Review text must not exceed 1000 characters')
 ];
 
 const ratingIdValidation = [

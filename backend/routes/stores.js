@@ -6,7 +6,10 @@ const {
   createStore, 
   updateStore, 
   deleteStore,
-  getStoreRatings
+  getStoreRatings,
+  getMyStores,
+  getMyStoreRatings,
+  getMyStoreStats
 } = require('../controllers/storeController');
 const { authenticateToken, isAdmin, isStoreOwner } = require('../middleware/auth');
 
@@ -24,6 +27,10 @@ const createStoreValidation = [
   body('address')
     .isLength({ max: 400 })
     .withMessage('Address must not exceed 400 characters'),
+  body('category')
+    .optional()
+    .isIn(['food', 'electronics', 'groceries', 'clothing', 'health', 'beauty', 'sports', 'books', 'home', 'automotive', 'other'])
+    .withMessage('Please select a valid category'),
   body('ownerId')
     .optional()
     .isInt()
@@ -45,6 +52,10 @@ const updateStoreValidation = [
     .optional()
     .isLength({ max: 400 })
     .withMessage('Address must not exceed 400 characters'),
+  body('category')
+    .optional()
+    .isIn(['food', 'electronics', 'groceries', 'clothing', 'health', 'beauty', 'sports', 'books', 'home', 'automotive', 'other'])
+    .withMessage('Please select a valid category'),
   body('ownerId')
     .optional()
     .isInt()
@@ -57,8 +68,17 @@ const storeIdValidation = [
 
 // Routes
 router.get('/', authenticateToken, getAllStores);
+
+// Store owner routes (must come before /:id routes to avoid conflicts)
+router.get('/my/stores', authenticateToken, isStoreOwner, getMyStores);
+router.get('/my/ratings', authenticateToken, isStoreOwner, getMyStoreRatings);
+router.get('/my/stats', authenticateToken, isStoreOwner, getMyStoreStats);
+
+// Individual store routes
 router.get('/:id', authenticateToken, storeIdValidation, getStoreById);
 router.get('/:id/ratings', authenticateToken, storeIdValidation, getStoreRatings);
+
+// Admin only routes
 router.post('/', authenticateToken, isAdmin, createStoreValidation, createStore);
 router.put('/:id', authenticateToken, isAdmin, updateStoreValidation, updateStore);
 router.delete('/:id', authenticateToken, isAdmin, storeIdValidation, deleteStore);

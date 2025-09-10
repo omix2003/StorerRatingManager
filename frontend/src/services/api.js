@@ -54,6 +54,7 @@ export const usersAPI = {
   update: (id, userData) => api.put(`/users/${id}`, userData),
   delete: (id) => api.delete(`/users/${id}`),
   getDashboardStats: () => api.get('/users/dashboard/stats'),
+  updateProfile: (profileData) => api.put('/users/profile', profileData),
 };
 
 // Stores API
@@ -64,6 +65,10 @@ export const storesAPI = {
   update: (id, storeData) => api.put(`/stores/${id}`, storeData),
   delete: (id) => api.delete(`/stores/${id}`),
   getRatings: (id, params) => api.get(`/stores/${id}/ratings`, { params }),
+  // Store owner specific endpoints
+  getMyStores: (params) => api.get('/stores/my/stores', { params }),
+  getMyStoreRatings: (params) => api.get('/stores/my/ratings', { params }),
+  getMyStoreStats: () => api.get('/stores/my/stats'),
 };
 
 // Ratings API

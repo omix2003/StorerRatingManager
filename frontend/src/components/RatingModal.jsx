@@ -4,6 +4,7 @@ import LoadingSpinner from './LoadingSpinner';
 
 const RatingModal = ({ isOpen, onClose, store, onRatingSubmitted }) => {
   const [rating, setRating] = useState(0);
+  const [reviewText, setReviewText] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -20,10 +21,12 @@ const RatingModal = ({ isOpen, onClose, store, onRatingSubmitted }) => {
       await ratingsAPI.create({
         storeId: store.id,
         rating: rating,
+        reviewText: reviewText.trim() || null,
       });
       onRatingSubmitted();
       onClose();
       setRating(0);
+      setReviewText('');
     } catch (error) {
       const errorMessage = error.response?.data?.message || 'Failed to submit rating';
       setError(errorMessage);
@@ -34,6 +37,7 @@ const RatingModal = ({ isOpen, onClose, store, onRatingSubmitted }) => {
 
   const handleClose = () => {
     setRating(0);
+    setReviewText('');
     setError('');
     onClose();
   };
@@ -72,6 +76,23 @@ const RatingModal = ({ isOpen, onClose, store, onRatingSubmitted }) => {
                rating === 2 ? 'Fair' :
                rating === 3 ? 'Good' :
                rating === 4 ? 'Very Good' : 'Excellent'}
+            </p>
+          </div>
+
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Review (Optional)
+            </label>
+            <textarea
+              value={reviewText}
+              onChange={(e) => setReviewText(e.target.value)}
+              rows={4}
+              maxLength={1000}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="Share your experience with this store..."
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              {reviewText.length}/1000 characters
             </p>
           </div>
 

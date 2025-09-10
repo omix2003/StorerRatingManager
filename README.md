@@ -13,6 +13,7 @@ A full-stack web application that allows users to submit ratings for stores (1-5
 
 ### 🏪 Store Management
 - **Store CRUD Operations** (Admin only)
+- **Store Categories** (11 predefined categories)
 - **Store Listing** with search and filtering
 - **Store Ratings** with 1-5 star system
 - **Average Rating Calculation**
@@ -26,6 +27,7 @@ A full-stack web application that allows users to submit ratings for stores (1-5
 
 ### ⭐ Rating System
 - **1-5 Star Rating System**
+- **Detailed Review Text** (up to 1000 characters)
 - **Duplicate Rating Prevention** (one rating per user per store)
 - **Rating History**
 - **Rating Analytics**
@@ -137,6 +139,25 @@ npm run dev
 ```
 Frontend will be available at `http://localhost:5173`
 
+## 🔑 Test Credentials
+
+The application comes with pre-configured test accounts for all user roles:
+
+### System Administrator
+- **Email**: `admin@storemanager.com`
+- **Password**: `AdminPass123!`
+- **Access**: Full system access, user management, store management
+
+### Store Owner
+- **Email**: `owner@storemanager.com`
+- **Password**: `OwnerPass123!`
+- **Access**: Manage own stores, view detailed ratings and reviews
+
+### Regular User
+- **Email**: `user@storemanager.com`
+- **Password**: `UserPass123!`
+- **Access**: Rate stores, view store listings, manage profile
+
 ## 📚 API Endpoints
 
 ### Authentication
@@ -160,6 +181,11 @@ Frontend will be available at `http://localhost:5173`
 - `PUT /api/stores/:id` - Update store (Admin only)
 - `DELETE /api/stores/:id` - Delete store (Admin only)
 - `GET /api/stores/:id/ratings` - Get store ratings
+
+### Store Owner Endpoints
+- `GET /api/stores/my/stores` - Get store owner's stores
+- `GET /api/stores/my/ratings` - Get ratings for store owner's stores
+- `GET /api/stores/my/stats` - Get store owner's statistics
 
 ### Ratings
 - `GET /api/ratings` - Get all ratings (with pagination)
@@ -188,8 +214,10 @@ Frontend will be available at `http://localhost:5173`
 ### Store Owner
 - All normal user permissions
 - Manage their own stores
-- View ratings for their stores
-- Store analytics
+- View detailed ratings for their stores
+- See reviewer information (name, email)
+- View detailed review text
+- Store analytics and statistics
 
 ## 🔒 Security Features
 
@@ -247,10 +275,28 @@ npm test
 - **Name**: Required, maximum 100 characters
 - **Email**: Valid email format
 - **Address**: Required, maximum 400 characters
+- **Category**: Required, must be one of 11 predefined categories
 
 ### Rating
 - **Rating**: 1-5 stars (integer)
+- **Review Text**: Optional, maximum 1000 characters
 - **One rating per user per store**
+
+## 🏷️ Store Categories
+
+The application supports 11 predefined store categories:
+
+1. **Food & Dining** - Restaurants, cafes, food delivery
+2. **Electronics** - Tech gadgets, computers, phones
+3. **Groceries** - Supermarkets, grocery stores
+4. **Clothing & Fashion** - Apparel, shoes, accessories
+5. **Health & Wellness** - Pharmacies, medical supplies
+6. **Beauty & Personal Care** - Cosmetics, skincare, salons
+7. **Sports & Recreation** - Sports equipment, gyms, outdoor gear
+8. **Books & Media** - Bookstores, libraries, media
+9. **Home & Garden** - Furniture, home improvement, gardening
+10. **Automotive** - Car dealerships, auto parts, services
+11. **Other** - Miscellaneous or unclassified stores
 
 ## 🔧 Development
 
